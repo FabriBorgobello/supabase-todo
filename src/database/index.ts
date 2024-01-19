@@ -1,6 +1,7 @@
 import { config } from '@/config';
 import { createClient } from '@supabase/supabase-js';
 import { Database } from './types';
+import { Task } from '@/types';
 
 class SupabaseClient {
   private client;
@@ -22,7 +23,7 @@ class SupabaseClient {
     return data;
   }
 
-  async retrieve(id: string) {
+  async retrieve(id: number) {
     const { data, error } = await this.client
       .from('tasks')
       .select('*')
@@ -45,10 +46,10 @@ class SupabaseClient {
     return data;
   }
 
-  async update(id: string, task: { title: string }) {
+  async update(id: number, task: Partial<Task>) {
     const { data, error } = await this.client
       .from('tasks')
-      .update({ title: task.title })
+      .update(task)
       .eq('id', id)
       .select();
     if (error) throw error;
@@ -56,14 +57,9 @@ class SupabaseClient {
     return data;
   }
 
-  async delete(id: string) {
-    const { data, error } = await this.client
-      .from('tasks')
-      .delete()
-      .eq('id', id);
+  async delete(id: number) {
+    const { error } = await this.client.from('tasks').delete().eq('id', id);
     if (error) throw error;
-
-    return data;
   }
 }
 

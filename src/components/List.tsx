@@ -24,6 +24,27 @@ export function List() {
     fetchTasks();
   }, []);
 
+  async function handleToggleStatus(e: React.MouseEvent, task: Task) {
+    try {
+      e.preventDefault();
+      await supabase.update(task.id, {
+        completed_at: task.completed_at ? null : new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function handleDelete(e: React.MouseEvent, task: Task) {
+    try {
+      e.preventDefault();
+      e.stopPropagation();
+      await supabase.delete(task.id);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <h2 className="text-center text-xl">Task List</h2>
@@ -51,7 +72,12 @@ export function List() {
           </div>
           <ul className="flex flex-col gap-4">
             {tasks.map((task) => (
-              <Item task={task} key={task.id} />
+              <Item
+                task={task}
+                key={task.id}
+                handleToggleStatus={handleToggleStatus}
+                handleDelete={handleDelete}
+              />
             ))}
           </ul>
         </>
