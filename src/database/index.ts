@@ -2,7 +2,7 @@ import { config } from '@/config';
 import { createClient } from '@supabase/supabase-js';
 import { Database } from './types';
 
-export class SupabaseClient {
+class SupabaseClient {
   private client;
 
   constructor() {
@@ -13,79 +13,58 @@ export class SupabaseClient {
   }
 
   async list() {
-    try {
-      const { data, error } = await this.client
-        .from('todos')
-        .select('*')
-        .order('id', { ascending: false });
-      if (error) {
-        throw error;
-      }
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
+    const { data, error } = await this.client
+      .from('tasks')
+      .select('*')
+      .order('id', { ascending: false });
+    if (error) throw error;
+
+    return data;
   }
 
   async retrieve(id: string) {
-    try {
-      const { data, error } = await this.client
-        .from('tasks')
-        .select('*')
-        .eq('id', id)
-        .single();
-      if (error) {
-        throw error;
-      }
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
+    const { data, error } = await this.client
+      .from('tasks')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) throw error;
+
+    return data;
   }
 
   async create(task: { title: string }) {
-    try {
-      const { data, error } = await this.client
-        .from('tasks')
-        .insert([{ title: task.title }])
-        .select();
-      if (error) {
-        throw error;
-      }
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
+    const { data, error } = await this.client
+      .from('tasks')
+      .insert([{ title: task.title }])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return data;
   }
 
   async update(id: string, task: { title: string }) {
-    try {
-      const { data, error } = await this.client
-        .from('tasks')
-        .update({ title: task.title })
-        .eq('id', id)
-        .select();
-      if (error) {
-        throw error;
-      }
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
+    const { data, error } = await this.client
+      .from('tasks')
+      .update({ title: task.title })
+      .eq('id', id)
+      .select();
+    if (error) throw error;
+
+    return data;
   }
 
   async delete(id: string) {
-    try {
-      const { data, error } = await this.client
-        .from('tasks')
-        .delete()
-        .eq('id', id);
-      if (error) {
-        throw error;
-      }
-      return data;
-    } catch (error) {
-      console.error(error);
-    }
+    const { data, error } = await this.client
+      .from('tasks')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+
+    return data;
   }
 }
+
+export const supabase = new SupabaseClient();
