@@ -46,12 +46,13 @@ class SupabaseClient {
     return data;
   }
 
-  async update(id: number, task: Partial<Task>) {
+  async update(id: Task['id'], task: Partial<Task>) {
     const { data, error } = await this.client
       .from('tasks')
       .update(task)
       .eq('id', id)
-      .select();
+      .select()
+      .single();
     if (error) throw error;
 
     return data;

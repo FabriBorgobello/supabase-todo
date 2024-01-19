@@ -24,25 +24,16 @@ export function List() {
     fetchTasks();
   }, []);
 
-  async function handleToggleStatus(e: React.MouseEvent, task: Task) {
-    try {
-      e.preventDefault();
-      await supabase.update(task.id, {
-        completed_at: task.completed_at ? null : new Date().toISOString(),
-      });
-    } catch (error) {
-      console.error(error);
-    }
+  async function handleUpdate(id: Task['id'], partialTask: Partial<Task>) {
+    const updated = await supabase.update(id, partialTask);
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === id ? updated : task)),
+    );
   }
 
-  async function handleDelete(e: React.MouseEvent, task: Task) {
-    try {
-      e.preventDefault();
-      e.stopPropagation();
-      await supabase.delete(task.id);
-    } catch (error) {
-      console.error(error);
-    }
+  async function handleDelete(id: Task['id']) {
+    await supabase.delete(id);
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   }
 
   return (
@@ -75,7 +66,7 @@ export function List() {
               <Item
                 task={task}
                 key={task.id}
-                handleToggleStatus={handleToggleStatus}
+                handleUpdate={handleUpdate}
                 handleDelete={handleDelete}
               />
             ))}
