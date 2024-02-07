@@ -41,12 +41,12 @@ export function Item({ task, handleUpdate, handleDelete }: Props) {
       <span className="text-xl">#{task.id}</span>
 
       {edit ? (
-        <form onSubmit={updateTask}>
+        <form onSubmit={updateTask} className="w-full flex flex-row gap-2">
           <input
             type="text"
             name="title"
             placeholder="Task title"
-            className="border rounded-sm p-2 text-black"
+            className="border rounded-sm p-2 text-black flex-1"
             defaultValue={task.title}
           />
           <button
